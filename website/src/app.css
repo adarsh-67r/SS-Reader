@@ -1,0 +1,41 @@
+@import 'tailwindcss';
+@plugin "daisyui";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+:root {
+	--font-serif: Georgia, 'Times New Roman', serif;
+	--font-sans: system-ui, -apple-system, sans-serif;
+}
+
+.prose {
+	font-family: var(--font-serif);
+	line-height: 1.9;
+	font-size: 1.1rem;
+}
+
+.prose p {
+	margin-bottom: 1.25em;
+	text-indent: 1.5em;
+}
+
+.prose p:first-of-type {
+	text-indent: 0;
+}
+
+/* Reading progress bar */
+#reading-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 3px;
+	background: oklch(var(--p));
+	z-index: 9999;
+	transition: width 0.1s ease;
+}
+
+/* Smooth scrolling */
+html {
+	scroll-behavior: smooth;
+}
