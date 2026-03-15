@@ -4,9 +4,12 @@
 	import { settings, THEME_OPTIONS } from '$lib/stores/settings';
 	import { chaptersStore } from '$lib/stores/chapters';
 	import { tocOpen } from '$lib/stores/ui';
+	import { registerIcons } from '$lib/icons';
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
+
+	registerIcons();
 
 	let { children } = $props();
 

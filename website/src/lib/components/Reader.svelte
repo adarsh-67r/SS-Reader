@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { settings } from '$lib/stores/settings';
 
 	interface Props {
@@ -25,10 +25,9 @@
 	onMount(() => {
 		window.addEventListener('scroll', updateProgress, { passive: true });
 		updateProgress();
-	});
-
-	onDestroy(() => {
-		window.removeEventListener('scroll', updateProgress);
+		return () => {
+			window.removeEventListener('scroll', updateProgress);
+		};
 	});
 </script>
 
