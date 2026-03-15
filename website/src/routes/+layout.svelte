@@ -69,27 +69,33 @@
 				<button
 					class="btn btn-ghost btn-sm btn-square"
 					aria-label="Change theme"
+					aria-haspopup="true"
+					aria-expanded={themeDropdownOpen}
 					title="Change theme"
 					onclick={() => (themeDropdownOpen = !themeDropdownOpen)}
+					onkeydown={(e) => e.key === 'Escape' && (themeDropdownOpen = false)}
 				>
 					<Icon icon="mdi:palette" width="20" />
 				</button>
 				{#if themeDropdownOpen}
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div class="dropdown-content z-[100] mt-2 p-2 shadow-xl bg-base-200 rounded-box w-44 border border-base-300">
-						<div class="grid grid-cols-1 gap-1 max-h-64 overflow-y-auto">
+					<ul class="dropdown-content z-[100] mt-2 p-2 shadow-xl bg-base-200 rounded-box w-44 border border-base-300 menu" role="menu">
+						<div class="max-h-64 overflow-y-auto grid grid-cols-1 gap-1">
 							{#each THEME_OPTIONS as theme}
-								<button
-									class="btn btn-sm btn-ghost justify-start capitalize"
-									class:btn-active={$settings.theme === theme}
-									onclick={() => setTheme(theme)}
-								>
-									<span class="w-4 h-4 rounded-full" data-theme={theme} style="background: oklch(var(--p))"></span>
-									{theme}
-								</button>
+								<li role="none">
+									<button
+										class="btn btn-sm btn-ghost justify-start capitalize"
+										class:btn-active={$settings.theme === theme}
+										role="menuitem"
+										onclick={() => setTheme(theme)}
+										onkeydown={(e) => e.key === 'Escape' && (themeDropdownOpen = false)}
+									>
+										<span class="w-4 h-4 rounded-full" data-theme={theme} style="background: oklch(var(--p))"></span>
+										{theme}
+									</button>
+								</li>
 							{/each}
 						</div>
-					</div>
+					</ul>
 				{/if}
 			</div>
 		</div>

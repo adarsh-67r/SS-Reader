@@ -31,6 +31,7 @@
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) return;
+		if (settingsModal?.open) return;
 
 		switch (e.key) {
 			case 'ArrowRight':

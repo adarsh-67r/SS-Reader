@@ -46,12 +46,12 @@
 
 <!-- Mobile overlay -->
 {#if open}
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div
-		class="fixed inset-0 bg-black/40 z-40 md:hidden"
+	<button
+		class="fixed inset-0 bg-black/40 z-40 md:hidden cursor-default"
 		onclick={() => tocOpen.set(false)}
-		onkeydown={(e) => e.key === 'Escape' && tocOpen.set(false)}
-	></div>
+		aria-label="Close table of contents"
+		tabindex="-1"
+	></button>
 {/if}
 
 <aside

@@ -120,9 +120,9 @@
 								{#if progress > 0}
 									<div class="w-16 shrink-0 flex items-center gap-2">
 										{#if progress >= 95}
-											<Icon icon="mdi:check-circle" width="16" class="text-success shrink-0" />
+											<Icon icon="mdi:check-circle" width="16" class="text-success shrink-0" aria-label="Chapter completed" />
 										{:else}
-											<div class="w-full bg-base-300 rounded-full h-1.5">
+											<div class="w-full bg-base-300 rounded-full h-1.5" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="{progress}% read">
 												<div class="bg-primary h-1.5 rounded-full transition-all duration-300" style:width="{progress}%"></div>
 											</div>
 										{/if}
