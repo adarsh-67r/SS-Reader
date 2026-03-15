@@ -1,20 +1,47 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
+export type TextAlign = 'left' | 'center' | 'right' | 'justify';
+
+export const THEME_OPTIONS = [
+	'sunset', 'dark', 'dracula', 'night', 'coffee',
+	'dim', 'light', 'cupcake', 'nord', 'business'
+] as const;
+
+export const FONT_OPTIONS = [
+	{ label: 'Alegreya', value: "'Alegreya', serif" },
+	{ label: 'EB Garamond', value: "'EB Garamond', serif" },
+	{ label: 'Crimson Pro', value: "'Crimson Pro', serif" },
+	{ label: 'Georgia', value: "Georgia, 'Times New Roman', serif" },
+	{ label: 'System Sans', value: 'system-ui, -apple-system, sans-serif' }
+] as const;
+
 export interface Settings {
-	theme: 'light' | 'dark';
+	theme: string;
 	fontSize: number;
-	fontFamily: 'serif' | 'sans';
+	fontFamily: string;
 	lineHeight: number;
+	fontWeight: number;
+	textAlign: TextAlign;
+	indent: boolean;
+	hyphenation: boolean;
+	stickyNavbar: boolean;
+	showComments: boolean;
 	readingProgress: Record<string, number>;
 	lastReadChapter: string | null;
 }
 
 const defaultSettings: Settings = {
-	theme: 'dark',
+	theme: 'sunset',
 	fontSize: 18,
-	fontFamily: 'serif',
+	fontFamily: "'Alegreya', serif",
 	lineHeight: 1.9,
+	fontWeight: 400,
+	textAlign: 'left',
+	indent: true,
+	hyphenation: false,
+	stickyNavbar: true,
+	showComments: true,
 	readingProgress: {},
 	lastReadChapter: null
 };
@@ -43,7 +70,7 @@ function createSettingsStore() {
 
 	return {
 		subscribe,
-		setTheme(theme: 'light' | 'dark') {
+		setTheme(theme: string) {
 			update((s) => {
 				const next = { ...s, theme };
 				save(next);
@@ -58,7 +85,7 @@ function createSettingsStore() {
 				return next;
 			});
 		},
-		setFontFamily(family: 'serif' | 'sans') {
+		setFontFamily(family: string) {
 			update((s) => {
 				const next = { ...s, fontFamily: family };
 				save(next);
@@ -68,6 +95,48 @@ function createSettingsStore() {
 		setLineHeight(lh: number) {
 			update((s) => {
 				const next = { ...s, lineHeight: lh };
+				save(next);
+				return next;
+			});
+		},
+		setFontWeight(weight: number) {
+			update((s) => {
+				const next = { ...s, fontWeight: weight };
+				save(next);
+				return next;
+			});
+		},
+		setTextAlign(align: TextAlign) {
+			update((s) => {
+				const next = { ...s, textAlign: align };
+				save(next);
+				return next;
+			});
+		},
+		setIndent(indent: boolean) {
+			update((s) => {
+				const next = { ...s, indent };
+				save(next);
+				return next;
+			});
+		},
+		setHyphenation(hyphenation: boolean) {
+			update((s) => {
+				const next = { ...s, hyphenation };
+				save(next);
+				return next;
+			});
+		},
+		setStickyNavbar(sticky: boolean) {
+			update((s) => {
+				const next = { ...s, stickyNavbar: sticky };
+				save(next);
+				return next;
+			});
+		},
+		setShowComments(show: boolean) {
+			update((s) => {
+				const next = { ...s, showComments: show };
 				save(next);
 				return next;
 			});
@@ -84,8 +153,12 @@ function createSettingsStore() {
 			});
 		},
 		reset() {
+			const theme = defaultSettings.theme;
 			set(defaultSettings);
-			if (browser) localStorage.removeItem('ss-reader-settings');
+			if (browser) {
+				localStorage.removeItem('ss-reader-settings');
+				document.documentElement.setAttribute('data-theme', theme);
+			}
 		}
 	};
 }

@@ -36,12 +36,14 @@
 
 <article
 	bind:this={articleEl}
-	class="prose prose-lg max-w-none mx-auto px-4"
-	style:font-size="{$settings.fontSize}px"
-	style:line-height={$settings.lineHeight}
-	style:font-family={$settings.fontFamily === 'serif'
-		? "Georgia, 'Times New Roman', serif"
-		: 'system-ui, sans-serif'}
+	class="prose prose-lg max-w-none mx-auto chapter-content"
+	style:--chapter-font={$settings.fontFamily}
+	style:--chapter-size="{$settings.fontSize}px"
+	style:--chapter-lh={$settings.lineHeight}
+	style:--chapter-weight={$settings.fontWeight}
+	style:--chapter-align={$settings.textAlign}
+	style:--chapter-hyphens={$settings.hyphenation ? 'auto' : 'none'}
+	style:--chapter-indent={$settings.indent ? '1.5em' : '0'}
 >
 	{@html content}
 </article>
