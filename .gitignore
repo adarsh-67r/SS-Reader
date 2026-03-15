@@ -1,0 +1,35 @@
+# Generated chapter content (run node scripts/process-epub.js to regenerate)
+chapters/*.md
+
+# Chapters copied into website static dir during CI build
+website/static/chapters/
+
+# Node modules
+node_modules/
+website/node_modules/
+
+# Build output
+website/build/
+website/.svelte-kit/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Lock files (keep website/package-lock.json for CI caching)
+package-lock.json

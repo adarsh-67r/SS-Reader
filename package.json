@@ -1,1 +1,14 @@
-{\n  "name": "SS-Reader",\n  "version": "1.0.0",\n  "scripts": {\n    "dev": "vite",\n    "build": "vite build",\n    "preview": "vite preview"\n  },\n  "devDependencies": {\n    "@sveltejs/kit": "next",\n    "vite": "latest"\n  }\n}
+{
+  "name": "SS-Reader",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "process-epub": "node scripts/process-epub.js",
+    "generate-index": "node scripts/generate-index.js",
+    "validate": "node scripts/validate-format.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "fast-xml-parser": "^5.3.6"
+  }
+}

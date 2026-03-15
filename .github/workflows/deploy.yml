@@ -1,0 +1,84 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'website/**'
+      - 'chapters/**'
+      - 'scripts/**'
+      - '*.epub'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: website/package-lock.json
+
+      - name: Install root dependencies (for EPUB processing)
+        run: npm ci
+        working-directory: .
+
+      - name: Process EPUB to chapters (if EPUB exists)
+        run: |
+          if ls *.epub 2>/dev/null | grep -q .; then
+            echo "EPUB found, processing..."
+            node scripts/process-epub.js
+          else
+            echo "No EPUB found in root, skipping extraction. Using existing chapters."
+          fi
+
+      - name: Validate chapter format
+        run: node scripts/validate-format.js || true
+
+      - name: Copy chapters to website static directory
+        run: |
+          mkdir -p website/static/chapters
+          cp -r chapters/. website/static/chapters/
+
+      - name: Install website dependencies
+        run: npm ci
+        working-directory: website
+
+      - name: Build SvelteKit app
+        run: npm run build
+        working-directory: website
+        env:
+          BASE_PATH: '/${{ github.event.repository.name }}'
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
