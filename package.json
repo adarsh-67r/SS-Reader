@@ -1,0 +1,1 @@
+{\n  "name": "SS-Reader",\n  "version": "1.0.0",\n  "scripts": {\n    "dev": "vite",\n    "build": "vite build",\n    "preview": "vite preview"\n  },\n  "devDependencies": {\n    "@sveltejs/kit": "next",\n    "vite": "latest"\n  }\n}
