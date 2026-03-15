@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { settings } from '$lib/stores/settings';
+	import { tocOpen } from '$lib/stores/ui';
 	import type { ChapterMeta } from '$lib/stores/chapters';
+	import Icon from '@iconify/svelte';
+	import { tick } from 'svelte';
 
 	interface Props {
 		chapters: ChapterMeta[];
@@ -12,6 +15,7 @@
 	let { chapters, currentSlug = '', open = false }: Props = $props();
 
 	let searchQuery = $state('');
+	let navEl: HTMLElement | undefined;
 
 	const filtered = $derived(
 		searchQuery.trim()
@@ -29,45 +33,95 @@
 		}
 		return map;
 	});
+
+	$effect(() => {
+		if (open && currentSlug && navEl) {
+			tick().then(() => {
+				const activeEl = navEl?.querySelector('[data-active="true"]');
+				activeEl?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+			});
+		}
+	});
 </script>
 
+<!-- Mobile overlay -->
+{#if open}
+	<button
+		class="fixed inset-0 bg-black/40 z-40 md:hidden cursor-default"
+		onclick={() => tocOpen.set(false)}
+		aria-label="Close table of contents"
+		tabindex="-1"
+	></button>
+{/if}
+
 <aside
-	class="w-72 shrink-0 border-r border-base-300 h-screen sticky top-0 overflow-y-auto flex flex-col"
+	class="w-72 shrink-0 border-r border-base-300/50 h-screen sticky top-0 overflow-y-auto flex flex-col bg-base-100/95 glass-navbar z-50
+		fixed md:relative md:z-auto transition-transform duration-300"
 	class:hidden={!open}
+	class:-translate-x-full={!open}
+	class:translate-x-0={open}
 >
-	<div class="p-4 border-b border-base-300 sticky top-0 bg-base-100 z-10">
-		<h2 class="font-bold text-lg mb-3">Table of Contents</h2>
-		<input
-			type="search"
-			placeholder="Search chapters…"
-			bind:value={searchQuery}
-			class="input input-bordered input-sm w-full"
-		/>
+	<div class="p-4 border-b border-base-300/50 sticky top-0 bg-base-100/95 glass-navbar z-10">
+		<div class="flex items-center justify-between mb-3">
+			<h2 class="font-bold text-lg flex items-center gap-2">
+				<Icon icon="mdi:table-of-contents" width="20" />
+				Contents
+			</h2>
+			<button
+				class="btn btn-ghost btn-xs btn-square md:hidden"
+				onclick={() => tocOpen.set(false)}
+				aria-label="Close"
+			>
+				<Icon icon="mdi:close" width="16" />
+			</button>
+		</div>
+		<div class="relative">
+			<Icon icon="mdi:magnify" width="16" class="absolute left-3 top-1/2 -translate-y-1/2 opacity-50" />
+			<input
+				type="search"
+				placeholder="Search chapters…"
+				bind:value={searchQuery}
+				class="input input-bordered input-sm w-full pl-9"
+			/>
+		</div>
 	</div>
 
-	<nav class="p-2 flex-1">
+	<nav class="p-2 flex-1" bind:this={navEl}>
 		{#each [...grouped] as [arc, arcChapters]}
 			<details open class="mb-1">
-				<summary class="cursor-pointer px-2 py-1 rounded font-semibold text-sm opacity-70 hover:opacity-100 select-none">
-					{arc}
+				<summary class="cursor-pointer px-2 py-1.5 rounded-lg font-semibold text-sm opacity-70 hover:opacity-100 hover:bg-base-200/50 select-none transition-all flex items-center gap-2">
+					<Icon icon="mdi:folder-outline" width="14" class="shrink-0" />
+					<span class="flex-1 truncate">{arc}</span>
+					<span class="text-xs opacity-50">{arcChapters.length}</span>
 				</summary>
 				<ul class="ml-2 mt-1 space-y-0.5">
 					{#each arcChapters as chapter}
 						{@const progress = $settings.readingProgress[chapter.slug] ?? 0}
+						{@const isActive = chapter.slug === currentSlug}
 						<li>
 							<a
 								href="{base}/chapter/{chapter.slug}"
-								class="flex items-center gap-2 px-2 py-1.5 rounded text-sm hover:bg-base-200 transition-colors"
-								class:bg-primary={chapter.slug === currentSlug}
-								class:text-primary-content={chapter.slug === currentSlug}
+								class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-all duration-200"
+								class:bg-primary={isActive}
+								class:text-primary-content={isActive}
+								class:shadow-sm={isActive}
+								class:hover:bg-base-200={!isActive}
+								data-active={isActive}
+								onclick={() => tocOpen.set(false)}
 							>
 								<span class="truncate flex-1">{chapter.title}</span>
 								{#if progress > 0}
 									<span
-										class="shrink-0 text-xs opacity-50"
+										class="shrink-0 text-xs"
+										class:opacity-70={isActive}
+										class:opacity-40={!isActive}
 										title="{progress}% read"
 									>
-										{#if progress >= 95}✓{:else}{progress}%{/if}
+										{#if progress >= 95}
+											<Icon icon="mdi:check-circle" width="14" />
+										{:else}
+											{progress}%
+										{/if}
 									</span>
 								{/if}
 							</a>
@@ -78,7 +132,10 @@
 		{/each}
 
 		{#if filtered.length === 0}
-			<p class="text-center opacity-50 py-8 text-sm">No chapters found.</p>
+			<div class="text-center py-8">
+				<Icon icon="mdi:file-search-outline" width="32" class="mx-auto mb-2 opacity-40" />
+				<p class="opacity-50 text-sm">No chapters found.</p>
+			</div>
 		{/if}
 	</nav>
 </aside>

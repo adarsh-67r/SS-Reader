@@ -1,12 +1,19 @@
+/* Custom reading fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..900;1,400..900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Crimson+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+
 @import 'tailwindcss';
 @plugin "daisyui";
 @plugin "@tailwindcss/typography";
 
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
-
 :root {
-	--font-serif: Georgia, 'Times New Roman', serif;
+	--font-serif: 'Alegreya', Georgia, 'Times New Roman', serif;
 	--font-sans: system-ui, -apple-system, sans-serif;
+}
+
+body {
+	font-family: var(--font-serif);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .prose {
@@ -17,11 +24,6 @@
 
 .prose p {
 	margin-bottom: 1.25em;
-	text-indent: 1.5em;
-}
-
-.prose p:first-of-type {
-	text-indent: 0;
 }
 
 /* Reading progress bar */
@@ -38,4 +40,65 @@
 /* Smooth scrolling */
 html {
 	scroll-behavior: smooth;
+}
+
+/* Chapter content custom styles */
+.chapter-content {
+	font-family: var(--chapter-font, var(--font-serif));
+	font-size: var(--chapter-size, 18px);
+	line-height: var(--chapter-lh, 1.9);
+	text-align: var(--chapter-align, left);
+	hyphens: var(--chapter-hyphens, none);
+	font-weight: var(--chapter-weight, 400);
+}
+
+.chapter-content p {
+	text-indent: var(--chapter-indent, 0);
+}
+
+/* Chapter heading decorations */
+.chapter-content h1,
+.chapter-content h2,
+.chapter-content h3 {
+	font-variant: small-caps;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 4px;
+}
+
+/* Custom horizontal rule */
+.chapter-content hr {
+	border: none;
+	text-align: center;
+	margin: 2em 0;
+	opacity: 0.5;
+}
+
+.chapter-content hr::after {
+	content: '⁂';
+	font-size: 1.2em;
+}
+
+/* Backdrop blur utility for navbars */
+.glass-navbar {
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+	width: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: oklch(var(--bc) / 0.2);
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: oklch(var(--bc) / 0.4);
 }
