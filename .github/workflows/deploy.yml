@@ -37,7 +37,7 @@ jobs:
           cache-dependency-path: website/package-lock.json
 
       - name: Install root dependencies (for EPUB processing)
-        run: npm ci
+        run: npm install --ignore-scripts
         working-directory: .
 
       - name: Process EPUB to chapters (if EPUB exists)

@@ -32,4 +32,4 @@ Thumbs.db
 npm-debug.log*
 
 # Lock files (keep website/package-lock.json for CI caching)
-package-lock.json
+/package-lock.json
